@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ movie.name }}</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .movie-card {
+            background: #222;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .movie-content {
+            display: flex;
+        }
+
+        .movie-card img {
+            width: 350px;
+            height: 520px;
+            object-fit: cover;
+        }
+
+        .info {
+            padding: 40px;
+            flex: 1;
+        }
+
+        .info h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #e50914;
+        }
+
+        .description {
+            color: #ddd;
+            line-height: 1.6;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .data {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .rating {
+            color: #ffd700;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .popular {
+            background: #e50914;
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* ПЛЕЕР */
+
+        .player-section {
+            padding: 30px 40px 40px;
+            background: #181818;
+        }
+
+        .player-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .video-player {
+            width: 100%;
+            max-height: 600px;
+            background: #000;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .back-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .back {
+            display: inline-block;
+            padding: 12px 25px;
+            background: white;
+            color: black;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .back:hover {
+            background: #e50914;
+            color: white;
+        }
+
+        @media(max-width: 700px) {
+
+            body {
+                padding: 20px 10px;
+            }
+
+            .movie-content {
+                flex-direction: column;
+            }
+
+            .movie-card img {
+                width: 100%;
+                height: 450px;
+            }
+
+            .info {
+                padding: 25px;
+            }
+
+            .info h1 {
+                font-size: 32px;
+            }
+
+            .player-section {
+                padding: 25px 15px 30px;
+            }
+
+            .player-title {
+                font-size: 24px;
+            }
+
+            .back-buttons {
+                flex-direction: column;
+            }
+
+            .back {
+                text-align: center;
+            }
+        }
+
+        .movie-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    display: inline-block;
+
+    padding: 12px 20px;
+
+    background: #333;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    transition: .3s;
+}
+
+.action-button:hover {
+    background: #e50914;
+}
+
+.action-button.favorite {
+    background: #5b1a1a;
+}
+
+.action-button.favorite:hover {
+    background: #e50914;
+}
+
+.save-modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, .75);
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 1000;
+
+    padding: 20px;
+}
+
+
+.save-modal-content {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 450px;
+
+    background: #222;
+
+    border-radius: 15px;
+
+    padding: 30px;
+
+    box-shadow: 0 15px 50px rgba(0,0,0,.7);
+}
+
+
+.save-modal-content h2 {
+    color: white;
+
+    margin-bottom: 10px;
+}
+
+
+.save-description {
+    color: #aaa;
+
+    margin-bottom: 20px;
+}
+
+
+.save-close {
+    position: absolute;
+
+    right: 15px;
+
+    top: 10px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #aaa;
+
+    font-size: 30px;
+
+    cursor: pointer;
+}
+
+
+.save-close:hover {
+    color: white;
+}
+
+
+.category-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+
+.category-row {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    background: #333;
+
+    padding: 12px 15px;
+
+    border-radius: 8px;
+}
+
+
+.category-row span {
+    color: white;
+}
+
+
+.save-category,
+.remove-category {
+    padding: 8px 12px;
+
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    color: white;
+
+    white-space: nowrap;
+}
+
+
+.save-category {
+    background: #e50914;
+}
+
+
+.save-category:hover {
+    background: #ff3742;
+}
+
+
+.remove-category {
+    background: #555;
+}
+
+
+.remove-category:hover {
+    background: #e50914;
+}
+
+
+.no-categories {
+    color: #aaa;
+
+    margin-bottom: 20px;
+}
+
+
+.create-category-link {
+    display: block;
+
+    text-align: center;
+
+    padding: 12px;
+
+    background: #e50914;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+}
+/* =========================
+   ФИКСИРОВАННАЯ ШАПКА
+========================= */
+
+.navbar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 70px;
+
+    background: #141414;
+
+    border-bottom: 1px solid #333;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 0 30px;
+}
+
+
+/* Стрелка назад */
+
+.back-button {
+    width: 42px;
+    height: 42px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #222;
+
+    color: white;
+
+    font-size: 28px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: .3s;
+
+    flex-shrink: 0;
+}
+
+.back-button:hover {
+    background: #e50914;
+}
+
+
+/* Название сайта */
+
+.site-title {
+    color: #e50914;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+.site-title:hover {
+    color: #ff3742;
+}
+
+
+/* Правая часть */
+
+.navbar-right {
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+/* =========================
+   ПОИСК
+========================= */
+
+.search-box {
+    display: flex;
+
+    align-items: center;
+
+    height: 42px;
+
+    background: #222;
+
+    border: 1px solid #444;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+}
+
+.search-icon {
+    padding-left: 12px;
+
+    font-size: 18px;
+}
+
+.search-input {
+    width: 180px;
+
+    padding: 10px;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-input:focus {
+    width: 240px;
+}
+
+
+/* =========================
+   КНОПКИ
+========================= */
+
+.nav-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    background: #e50914;
+
+    color: white;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition: .3s;
+}
+
+.nav-btn:hover {
+    background: #ff3742;
+}
+
+
+/* =========================
+   ПРОФИЛЬ
+========================= */
+
+.user-profile {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-decoration: none;
+
+    color: white;
+}
+
+.mini-avatar {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: #e50914;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+
+    border: 2px solid #333;
+
+    transition: .3s;
+}
+
+.mini-avatar img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+}
+
+.user-profile:hover .mini-avatar {
+    border-color: #e50914;
+}
+
+
+/* =========================
+   КОНТЕНТ
+========================= */
+
+body {
+    background: #141414;
+
+    color: white;
+
+    min-height: 100vh;
+
+    padding: 110px 20px 40px;
+}
+
+
+/* =========================
+   МОБИЛЬНЫЙ
+========================= */
+
+@media (max-width: 800px) {
+
+    .navbar {
+        height: 60px;
+
+        padding: 0 12px;
+
+        gap: 8px;
+    }
+
+    .site-title {
+        display: none;
+    }
+
+    .navbar-right {
+        gap: 6px;
+    }
+
+    .search-input {
+        width: 120px;
+    }
+
+    .search-input:focus {
+        width: 150px;
+    }
+
+    .nav-btn {
+        padding: 8px 10px;
+
+        font-size: 13px;
+    }
+
+    .mini-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    body {
+        padding-top: 85px;
+    }
+}
+    </style>
+
+</head>
+
+<body>
+<header class="navbar">
+
+    <!-- Стрелка назад -->
+    <button
+        type="button"
+        class="back-button"
+        onclick="history.back()"
+        title="Назад"
+    >
+        ←
+    </button>
+
+    <!-- Название сайта -->
+    <a href="{% url 'index' %}" class="site-title">
+        🎬 Movie Collection
+    </a>
+
+    <!-- Правая часть -->
+    <div class="navbar-right">
+
+        <!-- Поиск -->
+        <div class="search-box">
+
+            <span class="search-icon">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                class="search-input"
+                placeholder="Что ищете?"
+                autocomplete="off"
+                id="searchInput"
+            >
+
+        </div>
+
+
+        <!-- Закладки -->
+        <a
+            class="nav-btn"
+            href="{% url 'collection' %}"
+        >
+            🔖 Закладки
+        </a>
+
+
+        {% if user.is_authenticated %}
+
+            <!-- Профиль -->
+            <a
+                href="{% url 'profile' %}"
+                class="user-profile"
+                title="Мой профиль"
+            >
+
+                <div class="mini-avatar">
+
+                    {% if user.profile.avatar %}
+
+                        <img
+                            src="{{ user.profile.avatar.url }}"
+                            alt="Мой профиль"
+                        >
+
+                    {% else %}
+
+                        👤
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+        {% else %}
+
+            <a
+                class="nav-btn"
+                href="{% url 'login' %}"
+            >
+                Войти
+            </a>
+
+            <a
+                class="nav-btn"
+                href="{% url 'register' %}"
+            >
+                Регистрация
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</header>
+    <div class="movie-card">
+
+        <!-- Информация о фильме -->
+
+        <div class="movie-content">
+
+            <img src="{{ movie.image.url }}" alt="{{ movie.name }}">
+
+            <div class="info">
+
+                <h1>{{ movie.name }}</h1>
+
+                <p class="description">
+                    {{ movie.text }}
+                </p>
+
+                <p class="data">
+                    📅 Год выхода: {{ movie.year }}
+                </p>
+
+                <p class="data">
+                    🌍 Страна: {{ movie.country }}
+                </p>
+
+                <p class="data">
+                    🎬 Премьера: {{ movie.premiere }}
+                </p>
+
+                <p class="data">
+                    🎥 Режиссёр: {{ movie.director }}
+                </p>
+
+                <p class="data">
+                    🎭 Жанр: {{ movie.genre }}
+                </p>
+
+                <p class="data">
+                    🎞 В качестве: {{ movie.quality }}
+                </p>
+
+                <p class="data">
+                    🎙 В переводе: {{ movie.translation }}
+                </p>
+
+                <p class="data">
+                    🔞 Возраст: {{ movie.age }}
+                </p>
+
+                <p class="data">
+                    ⏱ Время: {{ movie.duration }}
+                </p>
+
+                <p class="rating">
+                    ⭐ Рейтинг: {{ movie.rate }}/10
+                </p>
+
+                {% if movie.is_popular %}
+                    <div class="popular">
+                        🔥 Популярный фильм
+                    </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- Плеер находится НИЖЕ информации -->
+
+        <div class="player-section">
+
+            <h2 class="player-title">
+                🎬 Смотреть фильм
+            </h2>
+
+            {% if movie.video %}
+
+                <video class="video-player" controls>
+
+                    <source src="{{ movie.video.url }}" type="video/mp4">
+
+                    Ваш браузер не поддерживает видео.
+
+                </video>
+
+            {% else %}
+
+                <p>
+                    Видео для этого фильма пока не добавлено.
+                </p>
+
+            {% endif %}
+
+                    <div class="movie-actions">
+
+    {% if user.is_authenticated %}
+
+        <button
+    type="button"
+    class="action-button"
+    onclick="openSaveWindow()"
+>
+    🔖 Сохранить
+</button>
+
+<div class="save-modal" id="saveModal">
+
+    <div class="save-modal-content">
+
+        <button
+            type="button"
+            class="save-close"
+            onclick="closeSaveWindow()"
+        >
+            ×
+        </button>
+
+        <h2>🔖 Сохранить фильм</h2>
+
+        <p class="save-description">
+            Выберите закладку:
+        </p>
+
+        {% if categories %}
+
+            <div class="category-list">
+
+                {% for category in categories %}
+
+                    <div class="category-row">
+
+                        <span>
+                            📁 {{ category.name }}
+                        </span>
+
+                        {% if movie in category.movies.all %}
+
+                            <a
+                                href="{% url 'remove_movie_from_category' movie.id category.id %}"
+                                class="remove-category"
+                            >
+                                Удалить
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'add_movie_to_category' movie.id category.id %}"
+                                class="save-category"
+                            >
+                                Сохранить
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="no-categories">
+                У вас пока нет закладок.
+            </p>
+
+            <a
+                href="{% url 'collection' %}"
+                class="create-category-link"
+            >
+                + Создать закладку
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+        
+    {% else %}
+
+        <a
+            href="{% url 'login' %}"
+            class="action-button"
+        >
+            🔐 Войдите, чтобы сохранить
+        </a>
+
+    {% endif %}
+
+</div>
+            
+
+        </div>
+
+    </div>
+<script>
+
+function openSaveWindow() {
+
+    document.getElementById("saveModal").style.display = "flex";
+
+}
+
+
+function closeSaveWindow() {
+
+    document.getElementById("saveModal").style.display = "none";
+
+}
+
+
+window.addEventListener("click", function(event) {
+
+    const modal = document.getElementById("saveModal");
+
+    if (event.target === modal) {
+
+        closeSaveWindow();
+
+    }
+
+});
+
+</script>
+</body>
+
+</html>
+

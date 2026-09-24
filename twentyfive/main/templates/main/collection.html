@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Закладки</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================
+           BODY
+        ========================= */
+
+        body {
+            background: #141414;
+            color: white;
+            min-height: 100vh;
+
+            padding: 100px 20px 40px;
+        }
+
+
+        /* =========================
+           ФИКСИРОВАННАЯ ШАПКА
+        ========================= */
+
+        .navbar {
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 70px;
+
+            background: #141414;
+
+            border-bottom: 1px solid #333;
+
+            z-index: 9999;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 0 30px;
+        }
+
+
+        /* Стрелка назад */
+
+        .back-button {
+            width: 42px;
+            height: 42px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #222;
+
+            color: white;
+
+            font-size: 28px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            transition: .3s;
+        }
+
+        .back-button:hover {
+            background: #e50914;
+        }
+
+
+        /* Название */
+
+        .site-title {
+            color: #e50914;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+        }
+
+        .site-title:hover {
+            color: #ff3742;
+        }
+
+
+        /* Правая часть */
+
+        .navbar-right {
+            margin-left: auto;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        /* =========================
+           ПОИСК
+        ========================= */
+
+        .search-box {
+            display: flex;
+
+            align-items: center;
+
+            height: 42px;
+
+            background: #222;
+
+            border: 1px solid #444;
+
+            border-radius: 8px;
+
+            overflow: hidden;
+        }
+
+
+        .search-icon {
+            padding-left: 12px;
+
+            font-size: 18px;
+        }
+
+
+        .search-input {
+            width: 180px;
+
+            padding: 10px;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+
+            color: white;
+
+            font-size: 15px;
+        }
+
+
+        .search-input::placeholder {
+            color: #999;
+        }
+
+
+        .search-input:focus {
+            width: 240px;
+        }
+
+
+        /* =========================
+           КНОПКИ ШАПКИ
+        ========================= */
+
+        .nav-btn {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-height: 42px;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            background: #e50914;
+
+            color: white;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+            transition: .3s;
+        }
+
+
+        .nav-btn:hover {
+            background: #ff3742;
+        }
+
+
+        /* =========================
+           ПРОФИЛЬ
+        ========================= */
+
+        .user-profile {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            text-decoration: none;
+        }
+
+
+        .mini-avatar {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            background: #e50914;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+
+            border: 2px solid #333;
+
+            transition: .3s;
+        }
+
+
+        .mini-avatar img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        .user-profile:hover .mini-avatar {
+            border-color: #e50914;
+        }
+
+
+        /* =========================
+           ЗАГОЛОВОК
+        ========================= */
+
+        .top {
+            max-width: 1400px;
+
+            margin: 0 auto 30px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .top h1 {
+            color: #e50914;
+
+            font-size: 36px;
+        }
+
+
+        /* =========================
+           КАТЕГОРИИ
+        ========================= */
+
+        .categories {
+            max-width: 1400px;
+
+            margin: 0 auto 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            border-bottom: 2px solid #333;
+
+            padding-bottom: 12px;
+
+            overflow-x: auto;
+        }
+
+
+        .category-wrapper {
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+
+            flex-shrink: 0;
+        }
+
+
+        .category {
+            color: #aaa;
+
+            background: transparent;
+
+            padding: 10px 18px;
+
+            font-size: 16px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+            transition: .3s;
+        }
+
+
+        .category:hover {
+            color: white;
+
+            background: #222;
+        }
+
+
+        .category.active {
+            color: white;
+
+            background: #e50914;
+        }
+
+
+        /* =========================
+           УДАЛИТЬ ЗАКЛАДКУ
+        ========================= */
+
+        .category-delete-form {
+            margin: 0;
+        }
+
+
+        .category-delete {
+            width: 32px;
+            height: 32px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #333;
+
+            color: #aaa;
+
+            cursor: pointer;
+
+            transition: .3s;
+        }
+
+
+        .category-delete:hover {
+            background: #e50914;
+
+            color: white;
+        }
+
+
+        /* =========================
+           ПЛЮС
+        ========================= */
+
+        .add-category {
+            width: 40px;
+            height: 40px;
+
+            min-width: 40px;
+
+            border-radius: 50%;
+
+            border: none;
+
+            background: #333;
+
+            color: white;
+
+            font-size: 25px;
+
+            cursor: pointer;
+
+            transition: .3s;
+        }
+
+
+        .add-category:hover {
+            background: #e50914;
+
+            transform: rotate(90deg);
+        }
+
+
+        /* =========================
+           ФИЛЬМЫ
+        ========================= */
+
+        .movies {
+            max-width: 1400px;
+
+            margin: 0 auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fill,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 30px;
+        }
+
+
+        /* Карточка */
+
+        .movie {
+            background: #222;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .5);
+
+            transition: .3s;
+        }
+
+
+        .movie:hover {
+            transform: translateY(-5px);
+        }
+
+
+        /* =========================
+           ПОСТЕР
+        ========================= */
+
+        .movie img {
+            width: 100%;
+
+            height: 330px;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+
+        .no-poster {
+            width: 100%;
+
+            height: 330px;
+
+            background: #333;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #777;
+
+            font-size: 18px;
+        }
+
+
+        /* =========================
+           НАЗВАНИЕ + КНОПКА
+        ========================= */
+
+        .movie-info {
+            padding: 18px;
+        }
+
+
+        .movie-info h2 {
+            color: white;
+
+            font-size: 20px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .watch {
+            display: block;
+
+            width: 100%;
+
+            padding: 11px;
+
+            background: #e50914;
+
+            color: white;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            transition: .3s;
+        }
+
+
+        .watch:hover {
+            background: #ff3742;
+        }
+
+
+        /* =========================
+           РЕЖИМ УДАЛЕНИЯ
+        ========================= */
+
+        .remove-box {
+            display: none;
+
+            margin-bottom: 15px;
+
+            padding: 10px;
+
+            background: #1b1b1b;
+
+            border-radius: 8px;
+        }
+
+
+        .remove-box label {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: #ddd;
+
+            cursor: pointer;
+        }
+
+
+        .remove-box input {
+            width: 18px;
+            height: 18px;
+
+            cursor: pointer;
+        }
+
+
+        .action-mode .remove-box {
+            display: block;
+        }
+
+
+        /* Кнопка Действие */
+
+        .action-button {
+            margin-left: auto;
+
+            border: none;
+
+            background: #333;
+
+            color: white;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            transition: .3s;
+        }
+
+
+        .action-button:hover {
+            background: #e50914;
+        }
+
+
+        /* Удалить выбранные */
+
+        .delete-form {
+            display: none;
+
+            max-width: 1400px;
+
+            margin: 0 auto 25px;
+
+            text-align: right;
+        }
+
+
+        .action-mode .delete-form {
+            display: block;
+        }
+
+
+        .delete-button {
+            border: none;
+
+            background: #e50914;
+
+            color: white;
+
+            padding: 12px 20px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+        }
+
+
+        .delete-button:hover {
+            background: #ff3742;
+        }
+
+
+        /* =========================
+           ПУСТО
+        ========================= */
+
+        .empty {
+            grid-column: 1 / -1;
+
+            text-align: center;
+
+            color: #777;
+
+            font-size: 20px;
+
+            padding: 80px 20px;
+        }
+
+
+        /* =========================
+           ОКНО СОЗДАНИЯ
+        ========================= */
+
+        .modal {
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, .75);
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 10000;
+        }
+
+
+        .modal-content {
+            position: relative;
+
+            width: 90%;
+
+            max-width: 450px;
+
+            background: #222;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, .8);
+        }
+
+
+        .modal-content h2 {
+            color: white;
+
+            margin-bottom: 20px;
+        }
+
+
+        .modal-content input {
+            width: 100%;
+
+            padding: 13px 15px;
+
+            border: none;
+
+            outline: none;
+
+            border-radius: 8px;
+
+            background: #333;
+
+            color: white;
+
+            font-size: 16px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .create-button {
+            width: 100%;
+
+            border: none;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            background: #e50914;
+
+            color: white;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+
+        .create-button:hover {
+            background: #ff3742;
+        }
+
+
+        .close {
+            position: absolute;
+
+            top: 10px;
+            right: 15px;
+
+            border: none;
+
+            background: none;
+
+            color: #aaa;
+
+            font-size: 30px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           МОБИЛЬНАЯ ВЕРСИЯ
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .navbar {
+                height: 60px;
+
+                padding: 0 12px;
+
+                gap: 8px;
+            }
+
+
+            .site-title {
+                display: none;
+            }
+
+
+            .navbar-right {
+                gap: 6px;
+            }
+
+
+            .search-input {
+                width: 120px;
+            }
+
+
+            .search-input:focus {
+                width: 150px;
+            }
+
+
+            .nav-btn {
+                padding: 8px 10px;
+
+                font-size: 13px;
+            }
+
+
+            .mini-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+
+            body {
+                padding-top: 85px;
+            }
+
+
+            .top h1 {
+                font-size: 28px;
+            }
+
+
+            .movies {
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
+
+                gap: 15px;
+            }
+
+
+            .movie img,
+            .no-poster {
+                height: 250px;
+            }
+
+
+            .movie-info {
+                padding: 12px;
+            }
+
+
+            .movie-info h2 {
+                font-size: 17px;
+            }
+
+        }
+
+
+        @media (max-width: 500px) {
+
+            .movies {
+                grid-template-columns: 1fr;
+            }
+
+
+            .movie img,
+            .no-poster {
+                height: 400px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==================================================
+     ШАПКА
+================================================== -->
+
+<header class="navbar">
+
+
+    <!-- Назад -->
+
+    <button
+        type="button"
+        class="back-button"
+        onclick="history.back()"
+        title="Назад"
+    >
+        ←
+    </button>
+
+
+    <!-- Название сайта -->
+
+    <a
+        href="{% url 'index' %}"
+        class="site-title"
+    >
+        🎬 Movie Collection
+    </a>
+
+
+    <!-- Правая часть -->
+
+    <div class="navbar-right">
+
+
+        <!-- Поиск -->
+
+        <div class="search-box">
+
+            <span class="search-icon">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search-input"
+                placeholder="Что ищете?"
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <!-- Закладки -->
+
+        <a
+            href="{% url 'collection' %}"
+            class="nav-btn"
+        >
+            🔖 Закладки
+        </a>
+
+
+        {% if user.is_authenticated %}
+
+            <!-- Профиль -->
+
+            <a
+                href="{% url 'profile' %}"
+                class="user-profile"
+                title="Мой профиль"
+            >
+
+                <div class="mini-avatar">
+
+                    {% if user.profile.avatar %}
+
+                        <img
+                            src="{{ user.profile.avatar.url }}"
+                            alt="Мой профиль"
+                        >
+
+                    {% else %}
+
+                        👤
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+        {% else %}
+
+            <a
+                href="{% url 'login' %}"
+                class="nav-btn"
+            >
+                Войти
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</header>
+
+
+<!-- ==================================================
+     ЗАГОЛОВОК
+================================================== -->
+
+<div class="top">
+
+    <h1>
+        🔖 Закладки
+    </h1>
+
+
+    {% if selected_category %}
+
+        <button
+            type="button"
+            class="action-button"
+            onclick="toggleActionMode()"
+        >
+            ⚙ Действие
+        </button>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ==================================================
+     КАТЕГОРИИ
+================================================== -->
+
+<div class="categories">
+
+
+    {% for category in categories %}
+
+        <div class="category-wrapper">
+
+
+            <!-- Открыть категорию -->
+
+            <a
+                href="{% url 'collection' %}?category={{ category.id }}"
+                class="category
+                {% if selected_category and selected_category.id == category.id %}
+                    active
+                {% endif %}"
+            >
+
+                {{ category.name }}
+
+            </a>
+
+
+            <!-- Удалить категорию -->
+
+            <form
+                method="POST"
+                action="{% url 'delete_category' category.id %}"
+                class="category-delete-form"
+                onsubmit="return confirm(
+                    'Удалить закладку «{{ category.name }}»?'
+                );"
+            >
+
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="category-delete"
+                    title="Удалить закладку"
+                >
+                    🗑
+                </button>
+
+            </form>
+
+
+        </div>
+
+    {% endfor %}
+
+
+    <!-- Создать категорию -->
+
+    <button
+        type="button"
+        class="add-category"
+        onclick="openCategoryWindow()"
+        title="Создать закладку"
+    >
+        +
+    </button>
+
+
+</div>
+
+
+<!-- ==================================================
+     УДАЛЕНИЕ ФИЛЬМОВ
+================================================== -->
+
+{% if selected_category %}
+
+    <form
+        method="POST"
+        action="{% url 'remove_movies_from_category' selected_category.id %}"
+        id="deleteForm"
+        class="delete-form"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="delete-button"
+        >
+            🗑 Удалить выбранные
+        </button>
+
+    </form>
+
+{% endif %}
+
+
+<!-- ==================================================
+     ФИЛЬМЫ
+================================================== -->
+
+<div
+    class="movies"
+    id="moviesContainer"
+>
+
+
+    {% if movies %}
+
+
+        {% for saved_movie in movies %}
+
+            <div
+                class="movie"
+                data-title="{{ saved_movie.movie.name|lower }}"
+            >
+
+
+                <!-- ПОСТЕР -->
+
+                {% if saved_movie.movie.image %}
+
+                    <img
+                        src="{{ saved_movie.movie.image.url }}"
+                        alt="{{ saved_movie.movie.name }}"
+                    >
+
+                {% else %}
+
+                    <div class="no-poster">
+                        Нет постера
+                    </div>
+
+                {% endif %}
+
+
+                <!-- НАЗВАНИЕ -->
+
+                <div class="movie-info">
+
+                    <h2>
+                        {{ saved_movie.movie.name }}
+                    </h2>
+
+
+                    <!-- УДАЛЕНИЕ -->
+
+                    <div class="remove-box">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="movie_ids"
+                                value="{{ saved_movie.id }}"
+                                form="deleteForm"
+                            >
+
+                            Удалить из закладки
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- СМОТРЕТЬ -->
+
+                    <a
+                        href="{% url 'detail' saved_movie.movie.id %}"
+                        class="watch"
+                    >
+                        🎬 Смотреть
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="empty">
+
+            {% if selected_category %}
+
+                В этой закладке пока нет фильмов 🎬
+
+            {% else %}
+
+                Выберите закладку
+
+            {% endif %}
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+<!-- ==================================================
+     ОКНО СОЗДАНИЯ ЗАКЛАДКИ
+================================================== -->
+
+<div
+    class="modal"
+    id="categoryModal"
+>
+
+
+    <div class="modal-content">
+
+
+        <button
+            type="button"
+            class="close"
+            onclick="closeCategoryWindow()"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Добавить закладку
+        </h2>
+
+
+        <form
+            method="POST"
+            action="{% url 'create_category' %}"
+        >
+
+            {% csrf_token %}
+
+
+            <input
+                type="text"
+                name="name"
+                placeholder="Название закладки"
+                maxlength="100"
+                required
+                autocomplete="off"
+            >
+
+
+            <button
+                type="submit"
+                class="create-button"
+            >
+                Создать
+            </button>
+
+        </form>
+
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     JAVASCRIPT
+================================================== -->
+
+<script>
+
+
+/* Открыть окно */
+
+function openCategoryWindow() {
+
+    document
+        .getElementById("categoryModal")
+        .style.display = "flex";
+
+}
+
+
+/* Закрыть окно */
+
+function closeCategoryWindow() {
+
+    document
+        .getElementById("categoryModal")
+        .style.display = "none";
+
+}
+
+
+/* Режим удаления */
+
+function toggleActionMode() {
+
+    document.body.classList.toggle("action-mode");
+
+}
+
+
+/* Закрытие окна по клику снаружи */
+
+window.addEventListener("click", function(event) {
+
+    const modal =
+        document.getElementById("categoryModal");
+
+
+    if (event.target === modal) {
+
+        closeCategoryWindow();
+
+    }
+
+});
+
+
+/* Закрытие по Escape */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            closeCategoryWindow();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ПОИСК ФИЛЬМОВ
+========================= */
+
+const searchInput =
+    document.getElementById("searchInput");
+
+
+searchInput.addEventListener(
+    "input",
+    function() {
+
+        const text =
+            this.value
+                .toLowerCase()
+                .trim();
+
+
+        const movies =
+            document.querySelectorAll(".movie");
+
+
+        movies.forEach(function(movie) {
+
+            const title =
+                movie.dataset.title;
+
+
+            if (title.includes(text)) {
+
+                movie.style.display = "";
+
+            } else {
+
+                movie.style.display = "none";
+
+            }
+
+        });
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

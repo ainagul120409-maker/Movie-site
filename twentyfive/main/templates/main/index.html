@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies</title>
+
+    <style>
+    .username {
+    color: #ccc;
+
+    margin-right: 10px;
+}
+
+
+/* Профиль пользователя в шапке */
+
+.user-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    text-decoration: none;
+    color: white;
+
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.mini-avatar {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: #e50914;
+
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15px;
+
+    border: 2px solid #333;
+
+    flex-shrink: 0;
+}
+
+.mini-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-profile:hover .mini-avatar {
+    border-color: #e50914;
+}
+
+.user-profile:hover .username {
+    color: #e50914;
+}
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #141414;
+            color: white;
+            padding: 40px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 40px;
+            color: #e50914;
+            margin-bottom: 40px;
+        }
+
+        .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+}
+.container.searching {
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(250px, 280px)
+    );
+
+    justify-content: start;
+}
+
+        .card {
+            background: #222;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .5);
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+
+       .card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+        .info {
+            padding: 20px;
+        }
+
+
+        .info h2 {
+            margin-bottom: 10px;
+        }
+
+
+        .year {
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .btn {
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            background: #e50914;
+            transition: .3s;
+        }
+
+
+        .btn:hover {
+            background: #ff3742;
+        }
+
+.navbar {
+    max-width: 1400px;
+
+    margin: 0 auto 40px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    flex-wrap: wrap;
+}
+
+.navbar h2 {
+    color: #e50914;
+}
+
+.nav-btn {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    margin-left: 8px;
+
+    border-radius: 8px;
+
+    background: #e50914;
+
+    color: white;
+
+    text-decoration: none;
+}
+
+.nav-btn:hover {
+    background: #ff3742;
+}
+
+.username {
+    color: #ccc;
+
+    margin-right: 10px;
+}
+        /* ПОИСК */
+
+.search-box {
+    display: inline-flex;
+    align-items: center;
+
+    background: #222;
+
+    border: 1px solid #444;
+
+    border-radius: 8px;
+
+    height: 42px;
+
+    margin-right: 8px;
+
+    overflow: hidden;
+}
+
+
+.search-icon {
+    font-size: 18px;
+
+    padding-left: 12px;
+}
+
+
+.search-input {
+    width: 180px;
+
+    padding: 10px;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+
+.search-input::placeholder {
+    color: #999;
+}
+
+
+.search-input:focus {
+    width: 240px;
+}
+
+
+@media (max-width: 700px) {
+
+    .search-input {
+        width: 130px;
+    }
+
+    .search-input:focus {
+        width: 160px;
+    }
+
+}
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="navbar">
+
+    <h2>🎬 Movie Collection</h2>
+
+    <div>
+
+    <div class="search-box">
+
+        <span class="search-icon">
+            🔍
+        </span>
+
+        <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Что ищете?"
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <a
+        class="nav-btn"
+        href="{% url 'collection' %}"
+    >
+         Закладки
+    </a>
+
+
+        {% if user.is_authenticated %}
+
+            <a
+                href="{% url 'profile' %}"
+                class="user-profile"
+                title="Мой профиль"
+            >
+
+                <div class="mini-avatar">
+
+                    {% if user.profile.avatar %}
+
+                        <img
+                            src="{{ user.profile.avatar.url }}"
+                            alt="Мой профиль"
+                        >
+
+                    {% else %}
+
+                        👤
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+
+        {% else %}
+
+            <a
+                class="nav-btn"
+                href="{% url 'login' %}"
+            >
+                Войти
+            </a>
+
+
+            <a
+                class="nav-btn"
+                href="{% url 'register' %}"
+            >
+                Регистрация
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+   
+
+
+    <div class="container">
+
+
+        {% for movie in movies %}
+
+
+        <div class="card">
+
+
+            <img src="{{ movie.image.url }}" alt="{{ movie.name }}">
+
+
+            <div class="info">
+
+                <h2>{{ movie.name }}</h2>
+
+                <p class="year">
+                    📅 {{ movie.year }}
+                </p>
+
+
+                <div class="buttons">
+<a class="btn" href="{% url 'detail' movie.id %}">
+    Смотреть
+</a>
+
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</body>
+<script>
+
+const searchInput = document.getElementById("searchInput");
+
+const movieCards = document.querySelectorAll(".card");
+
+
+searchInput.addEventListener("input", function () {
+
+    const searchText = this.value
+        .toLowerCase()
+        .trim();
+
+    const container = document.querySelector(".container");
+
+
+    if (searchText !== "") {
+
+        container.classList.add("searching");
+
+    } else {
+
+        container.classList.remove("searching");
+
+    }
+
+
+    movieCards.forEach(function (card) {
+
+        const movieName = card
+            .querySelector("h2")
+            .textContent
+            .toLowerCase();
+
+
+        if (movieName.includes(searchText)) {
+
+            card.style.display = "";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+});
+
+</script>
+</html>

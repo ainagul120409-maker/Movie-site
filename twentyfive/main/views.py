@@ -24,7 +24,171 @@ def index(request):
             "movies": movies
         }
     )
+def catalog(request):
 
+    movies = Movie.objects.all()
+
+    # =========================
+    # SEARCH
+    # =========================
+
+    search = request.GET.get("search", "").strip()
+
+    if search:
+        movies = movies.filter(
+            name__icontains=search
+        )
+
+
+    # =========================
+    # GENRE
+    # =========================
+
+    genre = request.GET.get("genre", "").strip()
+
+    if genre:
+        movies = movies.filter(
+            genre__icontains=genre
+        )
+
+
+    # =========================
+    # COUNTRY
+    # =========================
+
+    country = request.GET.get("country", "").strip()
+
+    if country:
+        movies = movies.filter(
+            country__icontains=country
+        )
+
+
+    # =========================
+    # YEAR
+    # =========================
+
+    year = request.GET.get("year", "").strip()
+
+    if year:
+        try:
+            movies = movies.filter(
+                year=int(year)
+            )
+        except ValueError:
+            pass
+
+
+    # =========================
+    # MINIMUM RATING
+    # =========================
+
+    min_rating = request.GET.get("min_rating", "").strip()
+
+    if min_rating:
+        try:
+            movies = movies.filter(
+                rate__gte=float(min_rating)
+            )
+        except ValueError:
+            pass
+
+
+    # =========================
+    # QUALITY
+    # =========================
+
+    quality = request.GET.get("quality", "").strip()
+
+    if quality:
+        movies = movies.filter(
+            quality__icontains=quality
+        )
+
+
+    # =========================
+    # SORT
+    # =========================
+
+    sort = request.GET.get("sort", "popular")
+
+    if sort == "rating":
+
+        movies = movies.order_by("-rate")
+
+    elif sort == "newest":
+
+        movies = movies.order_by("-year")
+
+    elif sort == "oldest":
+
+        movies = movies.order_by("year")
+
+    elif sort == "name":
+
+        movies = movies.order_by("name")
+
+    else:
+
+        movies = movies.order_by(
+            "-is_popular",
+            "-rate"
+        )
+
+
+    # =========================
+    # FILTER OPTIONS
+    # =========================
+
+    genres = (
+        Movie.objects
+        .exclude(genre="")
+        .values_list("genre", flat=True)
+        .distinct()
+    )
+
+    countries = (
+        Movie.objects
+        .exclude(country="")
+        .values_list("country", flat=True)
+        .distinct()
+    )
+
+    years = (
+        Movie.objects
+        .values_list("year", flat=True)
+        .distinct()
+        .order_by("-year")
+    )
+
+    qualities = (
+        Movie.objects
+        .exclude(quality="")
+        .values_list("quality", flat=True)
+        .distinct()
+    )
+
+
+    return render(
+        request,
+        "main/catalog.html",
+        {
+            "movies": movies,
+
+            "genres": genres,
+            "countries": countries,
+            "years": years,
+            "qualities": qualities,
+
+            "search": search,
+            "selected_genre": genre,
+            "selected_country": country,
+            "selected_year": year,
+            "selected_rating": min_rating,
+            "selected_quality": quality,
+            "selected_sort": sort,
+        }
+    )
 
 def detail(request, id):
     movie = get_object_or_404(Movie, id=id)

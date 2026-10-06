@@ -905,12 +905,10 @@
 
     <!-- Название сайта -->
 
-    <a
-        href="{% url 'index' %}"
-        class="site-title"
-    >
+         <a href="{% url 'index' %}" class="site-title">
         🎬 Movie Collection
     </a>
+
 
 
     <!-- Правая часть -->
@@ -943,8 +941,15 @@
             href="{% url 'collection' %}"
             class="nav-btn"
         >
-            🔖 Закладки
+             Закладки
         </a>
+            <a
+    class="nav-btn"
+    href="{% url 'catalog' %}"
+>
+    Каталог
+</a>
+
 
 
         {% if user.is_authenticated %}

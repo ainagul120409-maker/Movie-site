@@ -16,7 +16,11 @@ urlpatterns = [
         'admin/',
         admin.site.urls
     ),
-
+path(
+    'catalog/',
+    views.catalog,
+    name='catalog'
+),
 
     # =========================
     # ГЛАВНАЯ

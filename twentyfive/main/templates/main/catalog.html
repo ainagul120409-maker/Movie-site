@@ -1,0 +1,1159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Movie Catalog</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #141414;
+            color: white;
+            padding: 40px;
+        }
+
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+
+            max-width: 1400px;
+
+            margin: 0 auto 35px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .navbar h2 {
+            color: #e50914;
+        }
+
+
+        .nav-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .nav-btn {
+
+            display: inline-block;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            background: #e50914;
+
+            color: white;
+
+            text-decoration: none;
+
+            transition: .3s;
+        }
+
+
+        .nav-btn:hover {
+            background: #ff3742;
+        }
+
+
+        /* =========================
+           USER PROFILE
+        ========================= */
+
+        .user-profile {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            text-decoration: none;
+
+            color: white;
+        }
+
+
+        .mini-avatar {
+
+            width: 34px;
+
+            height: 34px;
+
+            border-radius: 50%;
+
+            background: #e50914;
+
+            overflow: hidden;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 17px;
+
+            border: 2px solid #333;
+        }
+
+
+        .mini-avatar img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        .user-profile:hover .mini-avatar {
+            border-color: #e50914;
+        }
+
+
+        /* =========================
+           PAGE TITLE
+        ========================= */
+
+        .page-title {
+
+            max-width: 1400px;
+
+            margin: 0 auto 25px;
+
+            font-size: 36px;
+
+            color: white;
+        }
+
+
+        .page-title span {
+            color: #e50914;
+        }
+
+
+        /* =========================
+           FILTER PANEL
+        ========================= */
+
+        .filter-panel {
+
+            max-width: 1400px;
+
+            margin: 0 auto 35px;
+
+            background: #222;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .4);
+        }
+
+
+        /* SEARCH */
+
+        .search-area {
+
+            width: 100%;
+
+            margin-bottom: 20px;
+        }
+
+
+        .search-area input {
+
+            width: 100%;
+
+            height: 48px;
+
+            padding: 0 18px;
+
+            border-radius: 8px;
+
+            border: 1px solid #444;
+
+            outline: none;
+
+            background: #141414;
+
+            color: white;
+
+            font-size: 16px;
+        }
+
+
+        .search-area input::placeholder {
+            color: #888;
+        }
+
+
+        .search-area input:focus {
+            border-color: #e50914;
+        }
+
+
+        /* FILTER GRID */
+
+        .filters {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+
+            gap: 15px;
+        }
+
+
+        .filter {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+
+        .filter label {
+
+            font-size: 13px;
+
+            color: #aaa;
+        }
+
+
+        .filter select {
+
+            height: 42px;
+
+            padding: 0 12px;
+
+            border-radius: 8px;
+
+            border: 1px solid #444;
+
+            background: #141414;
+
+            color: white;
+
+            outline: none;
+
+            cursor: pointer;
+        }
+
+
+        .filter select:focus {
+            border-color: #e50914;
+        }
+
+
+        /* BUTTONS */
+
+        .filter-buttons {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 20px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .search-button {
+
+            border: none;
+
+            padding: 11px 25px;
+
+            border-radius: 8px;
+
+            background: #e50914;
+
+            color: white;
+
+            font-size: 14px;
+
+            cursor: pointer;
+
+            transition: .3s;
+        }
+
+
+        .search-button:hover {
+            background: #ff3742;
+        }
+
+
+        .reset-button {
+
+            padding: 11px 25px;
+
+            border-radius: 8px;
+
+            background: #333;
+
+            color: white;
+
+            text-decoration: none;
+
+            transition: .3s;
+        }
+
+
+        .reset-button:hover {
+            background: #444;
+        }
+
+
+        /* =========================
+           RESULTS
+        ========================= */
+
+        .results-info {
+
+            max-width: 1400px;
+
+            margin: 0 auto 20px;
+
+            color: #aaa;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           MOVIES
+        ========================= */
+
+        .container {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(250px, 1fr));
+
+            gap: 30px;
+
+            width: 100%;
+
+            max-width: 1400px;
+
+            margin: 0 auto;
+        }
+
+
+        /* CARD */
+
+        .card {
+
+            background: #222;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, .5);
+
+            transition: .3s;
+        }
+
+
+        .card:hover {
+
+            transform: translateY(-8px);
+        }
+
+
+        .card img {
+
+            width: 100%;
+
+            height: 350px;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+
+        .no-poster {
+
+            width: 100%;
+
+            height: 350px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #333;
+
+            color: #999;
+        }
+
+
+        /* INFO */
+
+        .info {
+
+            padding: 18px;
+        }
+
+
+        .info h2 {
+
+            margin-bottom: 10px;
+
+            font-size: 21px;
+        }
+
+
+        .movie-details {
+
+            color: #aaa;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+
+            margin-bottom: 15px;
+        }
+
+
+        .rating {
+
+            color: #ffd700;
+
+            font-weight: bold;
+        }
+
+
+        /* BUTTON */
+
+        .btn {
+
+            display: inline-block;
+
+            text-decoration: none;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            color: white;
+
+            background: #e50914;
+
+            transition: .3s;
+        }
+
+
+        .btn:hover {
+            background: #ff3742;
+        }
+
+
+        /* =========================
+           NO RESULTS
+        ========================= */
+
+        .no-results {
+
+            max-width: 1400px;
+
+            margin: 50px auto;
+
+            text-align: center;
+
+            color: #888;
+        }
+
+
+        .no-results h2 {
+
+            color: white;
+
+            margin-bottom: 10px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 20px;
+            }
+
+
+            .navbar {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+
+            .nav-right {
+                width: 100%;
+            }
+
+
+            .page-title {
+                font-size: 28px;
+            }
+
+
+            .container {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 15px;
+            }
+
+
+            .card img,
+            .no-poster {
+
+                height: 250px;
+            }
+
+        }
+@media (max-width: 800px) {
+
+    .navbar {
+        height: 60px;
+
+        padding: 0 12px;
+
+        gap: 8px;
+    }
+
+    .site-title {
+        display: none;
+    }
+
+    .navbar-right {
+        gap: 6px;
+    }
+
+    .search-input {
+        width: 120px;
+    }
+
+    .search-input:focus {
+        width: 150px;
+    }
+
+    .nav-btn {
+        padding: 8px 10px;
+
+        font-size: 13px;
+    }
+
+    .mini-avatar {
+        width: 36px;
+        height: 36px;
+    }
+
+    body {
+        padding-top: 85px;
+    }
+}
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<div class="navbar">
+
+
+       <a href="{% url 'index' %}" class="site-title">
+        🎬 Movie Collection
+    </a>
+
+
+    <div class="nav-right">
+
+
+        <a
+            class="nav-btn"
+            href="{% url 'index' %}"
+        >
+            Главная
+        </a>
+
+
+        <a
+            class="nav-btn"
+            href="{% url 'collection' %}"
+        >
+            Закладки
+        </a>
+
+
+        {% if user.is_authenticated %}
+
+
+            <a
+                href="{% url 'profile' %}"
+                class="user-profile"
+                title="Мой профиль"
+            >
+
+                <div class="mini-avatar">
+
+                    {% if user.profile.avatar %}
+
+                        <img
+                            src="{{ user.profile.avatar.url }}"
+                            alt="Мой профиль"
+                        >
+
+                    {% else %}
+
+                        👤
+
+                    {% endif %}
+
+                </div>
+
+            </a>
+
+
+        {% else %}
+
+
+            <a
+                class="nav-btn"
+                href="{% url 'login' %}"
+            >
+                Войти
+            </a>
+
+
+            <a
+                class="nav-btn"
+                href="{% url 'register' %}"
+            >
+                Регистрация
+            </a>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     TITLE
+========================= -->
+
+<h1 class="page-title">
+
+    Movie <span>Catalog</span>
+
+</h1>
+
+
+<!-- =========================
+     FILTERS
+========================= -->
+
+<form
+    method="GET"
+    action="{% url 'catalog' %}"
+    class="filter-panel"
+>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-area">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="🔍 Search movie..."
+            value="{{ search }}"
+        >
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+
+        <!-- GENRE -->
+
+        <div class="filter">
+
+            <label>
+                Genre
+            </label>
+
+            <select name="genre">
+
+                <option value="">
+                    All genres
+                </option>
+
+
+                {% for item in genres %}
+
+                    <option
+                        value="{{ item }}"
+                        {% if selected_genre == item %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ item }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- COUNTRY -->
+
+        <div class="filter">
+
+            <label>
+                Country
+            </label>
+
+            <select name="country">
+
+                <option value="">
+                    All countries
+                </option>
+
+
+                {% for item in countries %}
+
+                    <option
+                        value="{{ item }}"
+                        {% if selected_country == item %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ item }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- YEAR -->
+
+        <div class="filter">
+
+            <label>
+                Year
+            </label>
+
+            <select name="year">
+
+                <option value="">
+                    All years
+                </option>
+
+
+                {% for item in years %}
+
+                    <option
+                        value="{{ item }}"
+                        {% if selected_year == item|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ item }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- RATING -->
+
+        <div class="filter">
+
+            <label>
+                Minimum rating
+            </label>
+
+            <select name="min_rating">
+
+                <option value="">
+                    Any rating
+                </option>
+
+                <option
+                    value="5"
+                    {% if selected_rating == "5" %}
+                        selected
+                    {% endif %}
+                >
+                    ⭐ 5+
+                </option>
+
+                <option
+                    value="6"
+                    {% if selected_rating == "6" %}
+                        selected
+                    {% endif %}
+                >
+                    ⭐ 6+
+                </option>
+
+                <option
+                    value="7"
+                    {% if selected_rating == "7" %}
+                        selected
+                    {% endif %}
+                >
+                    ⭐ 7+
+                </option>
+
+                <option
+                    value="8"
+                    {% if selected_rating == "8" %}
+                        selected
+                    {% endif %}
+                >
+                    ⭐ 8+
+                </option>
+
+                <option
+                    value="9"
+                    {% if selected_rating == "9" %}
+                        selected
+                    {% endif %}
+                >
+                    ⭐ 9+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- QUALITY -->
+
+        <div class="filter">
+
+            <label>
+                Quality
+            </label>
+
+            <select name="quality">
+
+                <option value="">
+                    All quality
+                </option>
+
+
+                {% for item in qualities %}
+
+                    <option
+                        value="{{ item }}"
+                        {% if selected_quality == item %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ item }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SORT -->
+
+        <div class="filter">
+
+            <label>
+                Sort by
+            </label>
+
+            <select name="sort">
+
+                <option
+                    value="popular"
+                    {% if selected_sort == "popular" %}
+                        selected
+                    {% endif %}
+                >
+                    Popular
+                </option>
+
+
+                <option
+                    value="rating"
+                    {% if selected_sort == "rating" %}
+                        selected
+                    {% endif %}
+                >
+                    Highest rating
+                </option>
+
+
+                <option
+                    value="newest"
+                    {% if selected_sort == "newest" %}
+                        selected
+                    {% endif %}
+                >
+                    Newest
+                </option>
+
+
+                <option
+                    value="oldest"
+                    {% if selected_sort == "oldest" %}
+                        selected
+                    {% endif %}
+                >
+                    Oldest
+                </option>
+
+
+                <option
+                    value="name"
+                    {% if selected_sort == "name" %}
+                        selected
+                    {% endif %}
+                >
+                    Name A-Z
+                </option>
+
+            </select>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- BUTTONS -->
+
+    <div class="filter-buttons">
+
+
+        <button
+            type="submit"
+            class="search-button"
+        >
+            Search
+        </button>
+
+
+        <a
+            href="{% url 'catalog' %}"
+            class="reset-button"
+        >
+            Reset
+        </a>
+
+
+    </div>
+
+
+</form>
+
+
+<!-- =========================
+     RESULTS
+========================= -->
+
+<div class="results-info">
+
+    Found movies: {{ movies|length }}
+
+</div>
+
+
+<!-- =========================
+     MOVIE CARDS
+========================= -->
+
+{% if movies %}
+
+
+<div class="container">
+
+
+    {% for movie in movies %}
+
+
+    <div class="card">
+
+
+        {% if movie.image %}
+
+            <img
+                src="{{ movie.image.url }}"
+                alt="{{ movie.name }}"
+            >
+
+        {% else %}
+
+            <div class="no-poster">
+                Нет постера
+            </div>
+
+        {% endif %}
+
+
+        <div class="info">
+
+
+            <h2>
+                {{ movie.name }}
+            </h2>
+
+
+            <div class="movie-details">
+
+                📅 {{ movie.year }}
+
+                <br>
+
+                🎭 {{ movie.genre }}
+
+                <br>
+
+                🌍 {{ movie.country }}
+
+                <br>
+
+                <span class="rating">
+                    ⭐ {{ movie.rate }}
+                </span>
+
+            </div>
+
+
+            <a
+                class="btn"
+                href="{% url 'detail' movie.id %}"
+            >
+                Смотреть
+            </a>
+
+
+        </div>
+
+
+    </div>
+
+
+    {% endfor %}
+
+
+</div>
+
+
+{% else %}
+
+
+<div class="no-results">
+
+    <h2>
+        No movies found
+    </h2>
+
+    <p>
+        Try changing your search or filters.
+    </p>
+
+</div>
+
+
+{% endif %}
+
+
+</body>
+
+</html>
+```

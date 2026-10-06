@@ -698,8 +698,14 @@ body {
             class="nav-btn"
             href="{% url 'collection' %}"
         >
-            🔖 Закладки
+             Закладки
         </a>
+                 <a
+    class="nav-btn"
+    href="{% url 'catalog' %}"
+>
+    Каталог
+</a>
 
 
         {% if user.is_authenticated %}

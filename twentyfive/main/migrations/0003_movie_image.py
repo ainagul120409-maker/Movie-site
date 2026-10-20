@@ -3,19 +3,19 @@
 from django.db import migrations, models
 
 
-def ensure_image_field(Movie):
-    for field in Movie._meta.local_fields:
+def ensure_image_field(model):
+    for field in model._meta.local_fields:
         if field.name == 'image':
             return field
 
     field = models.ImageField(default=2, upload_to='movies/')
-    field.contribute_to_class(Movie, 'image')
+    field.contribute_to_class(model, 'image')
     return field
 
 
 def add_image_column_if_missing(apps, schema_editor):
-    Movie = apps.get_model('main', 'Movie')
-    table_name = Movie._meta.db_table
+    model = apps.get_model('main', 'Movie')
+    table_name = model._meta.db_table
 
     with schema_editor.connection.cursor() as cursor:
         existing_columns = {
@@ -25,14 +25,14 @@ def add_image_column_if_missing(apps, schema_editor):
             )
         }
 
-    field = ensure_image_field(Movie)
+    field = ensure_image_field(model)
     if field.column not in existing_columns:
-        schema_editor.add_field(Movie, field)
+        schema_editor.add_field(model, field)
 
 
 def remove_image_column_if_present(apps, schema_editor):
-    Movie = apps.get_model('main', 'Movie')
-    table_name = Movie._meta.db_table
+    model = apps.get_model('main', 'Movie')
+    table_name = model._meta.db_table
 
     with schema_editor.connection.cursor() as cursor:
         existing_columns = {
@@ -42,9 +42,9 @@ def remove_image_column_if_present(apps, schema_editor):
             )
         }
 
-    field = ensure_image_field(Movie)
+    field = ensure_image_field(model)
     if field.column in existing_columns:
-        schema_editor.remove_field(Movie, field)
+        schema_editor.remove_field(model, field)
 
 
 class Migration(migrations.Migration):

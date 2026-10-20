@@ -3,6 +3,40 @@
 from django.db import migrations, models
 
 
+def add_image_column_if_missing(apps, schema_editor):
+    Movie = apps.get_model('main', 'Movie')
+    table_name = Movie._meta.db_table
+
+    with schema_editor.connection.cursor() as cursor:
+        existing_columns = {
+            column.name
+            for column in schema_editor.connection.introspection.get_table_description(
+                cursor, table_name
+            )
+        }
+
+    field = Movie._meta.get_field('image')
+    if field.column not in existing_columns:
+        schema_editor.add_field(Movie, field)
+
+
+def remove_image_column_if_present(apps, schema_editor):
+    Movie = apps.get_model('main', 'Movie')
+    table_name = Movie._meta.db_table
+
+    with schema_editor.connection.cursor() as cursor:
+        existing_columns = {
+            column.name
+            for column in schema_editor.connection.introspection.get_table_description(
+                cursor, table_name
+            )
+        }
+
+    field = Movie._meta.get_field('image')
+    if field.column in existing_columns:
+        schema_editor.remove_field(Movie, field)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,10 +44,20 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='movie',
-            name='image',
-            field=models.ImageField(default=2, upload_to='movies/'),
-            preserve_default=False,
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunPython(
+                    add_image_column_if_missing,
+                    remove_image_column_if_present,
+                ),
+            ],
+            state_operations=[
+                migrations.AddField(
+                    model_name='movie',
+                    name='image',
+                    field=models.ImageField(default=2, upload_to='movies/'),
+                    preserve_default=False,
+                ),
+            ],
         ),
     ]

@@ -3,6 +3,15 @@
 from django.db import migrations, models
 
 
+def get_image_field(Movie):
+    try:
+        return Movie._meta.get_field('image')
+    except LookupError:
+        field = models.ImageField(default=2, upload_to='movies/')
+        field.contribute_to_class(Movie, 'image')
+        return field
+
+
 def add_image_column_if_missing(apps, schema_editor):
     Movie = apps.get_model('main', 'Movie')
     table_name = Movie._meta.db_table
@@ -15,7 +24,7 @@ def add_image_column_if_missing(apps, schema_editor):
             )
         }
 
-    field = Movie._meta.get_field('image')
+    field = get_image_field(Movie)
     if field.column not in existing_columns:
         schema_editor.add_field(Movie, field)
 
@@ -32,7 +41,7 @@ def remove_image_column_if_present(apps, schema_editor):
             )
         }
 
-    field = Movie._meta.get_field('image')
+    field = get_image_field(Movie)
     if field.column in existing_columns:
         schema_editor.remove_field(Movie, field)
 

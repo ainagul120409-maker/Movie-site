@@ -3,6 +3,35 @@
 from django.db import migrations, models
 
 
+def add_movie_metadata_columns_if_missing(apps, schema_editor):
+    Movie = apps.get_model('main', 'Movie')
+    table_name = Movie._meta.db_table
+    fields = {
+        'age': models.CharField(blank=True, default='', max_length=10),
+        'country': models.CharField(blank=True, default='', max_length=100),
+        'director': models.CharField(blank=True, default='', max_length=100),
+        'duration': models.CharField(blank=True, default='', max_length=50),
+        'genre': models.CharField(blank=True, default='', max_length=200),
+        'premiere': models.CharField(blank=True, default='', max_length=100),
+        'quality': models.CharField(blank=True, default='', max_length=50),
+        'translation': models.CharField(blank=True, default='', max_length=200),
+    }
+
+    with schema_editor.connection.cursor() as cursor:
+        existing_columns = {
+            column.name
+            for column in schema_editor.connection.introspection.get_table_description(
+                cursor, table_name
+            )
+        }
+
+    for name, field in fields.items():
+        field.contribute_to_class(Movie, name)
+        if field.column not in existing_columns:
+            schema_editor.add_field(Movie, field)
+            existing_columns.add(field.column)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,66 +39,77 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='movie',
-            name='image',
-        ),
-        migrations.RemoveField(
-            model_name='movie',
-            name='is_popular',
-        ),
-        migrations.RemoveField(
-            model_name='movie',
-            name='text',
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='age',
-            field=models.CharField(blank=True, default='', max_length=10),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='country',
-            field=models.CharField(blank=True, default='', max_length=100),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='director',
-            field=models.CharField(blank=True, default='', max_length=100),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='duration',
-            field=models.CharField(blank=True, default='', max_length=50),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='genre',
-            field=models.CharField(blank=True, default='', max_length=200),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='premiere',
-            field=models.CharField(blank=True, default='', max_length=100),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='quality',
-            field=models.CharField(blank=True, default='', max_length=50),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='translation',
-            field=models.CharField(blank=True, default='', max_length=200),
-        ),
-        migrations.AlterField(
-            model_name='movie',
-            name='name',
-            field=models.CharField(max_length=100),
-        ),
-        migrations.AlterField(
-            model_name='movie',
-            name='rate',
-            field=models.FloatField(),
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunPython(
+                    add_movie_metadata_columns_if_missing,
+                    migrations.RunPython.noop,
+                ),
+                migrations.AlterField(
+                    model_name='movie',
+                    name='name',
+                    field=models.CharField(max_length=100),
+                ),
+                migrations.AlterField(
+                    model_name='movie',
+                    name='rate',
+                    field=models.FloatField(),
+                ),
+            ],
+            state_operations=[
+                migrations.RemoveField(model_name='movie', name='image'),
+                migrations.RemoveField(model_name='movie', name='is_popular'),
+                migrations.RemoveField(model_name='movie', name='text'),
+                migrations.AddField(
+                    model_name='movie',
+                    name='age',
+                    field=models.CharField(blank=True, default='', max_length=10),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='country',
+                    field=models.CharField(blank=True, default='', max_length=100),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='director',
+                    field=models.CharField(blank=True, default='', max_length=100),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='duration',
+                    field=models.CharField(blank=True, default='', max_length=50),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='genre',
+                    field=models.CharField(blank=True, default='', max_length=200),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='premiere',
+                    field=models.CharField(blank=True, default='', max_length=100),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='quality',
+                    field=models.CharField(blank=True, default='', max_length=50),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='translation',
+                    field=models.CharField(blank=True, default='', max_length=200),
+                ),
+                migrations.AlterField(
+                    model_name='movie',
+                    name='name',
+                    field=models.CharField(max_length=100),
+                ),
+                migrations.AlterField(
+                    model_name='movie',
+                    name='rate',
+                    field=models.FloatField(),
+                ),
+            ],
         ),
     ]

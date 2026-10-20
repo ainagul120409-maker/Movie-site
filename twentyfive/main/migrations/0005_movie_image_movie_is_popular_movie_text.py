@@ -3,6 +3,30 @@
 from django.db import migrations, models
 
 
+def add_movie_display_columns_if_missing(apps, schema_editor):
+    Movie = apps.get_model('main', 'Movie')
+    table_name = Movie._meta.db_table
+    fields = {
+        'image': models.ImageField(blank=True, upload_to='movies/'),
+        'is_popular': models.BooleanField(default=False),
+        'text': models.TextField(blank=True, default='', max_length=1000),
+    }
+
+    with schema_editor.connection.cursor() as cursor:
+        existing_columns = {
+            column.name
+            for column in schema_editor.connection.introspection.get_table_description(
+                cursor, table_name
+            )
+        }
+
+    for name, field in fields.items():
+        field.contribute_to_class(Movie, name)
+        if field.column not in existing_columns:
+            schema_editor.add_field(Movie, field)
+            existing_columns.add(field.column)
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,19 +34,29 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='movie',
-            name='image',
-            field=models.ImageField(blank=True, upload_to='movies/'),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='is_popular',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name='movie',
-            name='text',
-            field=models.TextField(blank=True, default='', max_length=1000),
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunPython(
+                    add_movie_display_columns_if_missing,
+                    migrations.RunPython.noop,
+                ),
+            ],
+            state_operations=[
+                migrations.AddField(
+                    model_name='movie',
+                    name='image',
+                    field=models.ImageField(blank=True, upload_to='movies/'),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='is_popular',
+                    field=models.BooleanField(default=False),
+                ),
+                migrations.AddField(
+                    model_name='movie',
+                    name='text',
+                    field=models.TextField(blank=True, default='', max_length=1000),
+                ),
+            ],
         ),
     ]

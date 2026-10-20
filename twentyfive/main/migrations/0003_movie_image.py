@@ -4,12 +4,13 @@ from django.db import migrations, models
 
 
 def get_image_field(Movie):
-    try:
-        return Movie._meta.get_field('image')
-    except LookupError:
-        field = models.ImageField(default=2, upload_to='movies/')
-        field.contribute_to_class(Movie, 'image')
-        return field
+    for field in Movie._meta.local_fields:
+        if field.name == 'image':
+            return field
+
+    field = models.ImageField(default=2, upload_to='movies/')
+    field.contribute_to_class(Movie, 'image')
+    return field
 
 
 def add_image_column_if_missing(apps, schema_editor):

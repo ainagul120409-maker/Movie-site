@@ -3,7 +3,7 @@
 from django.db import migrations, models
 
 
-def get_image_field(Movie):
+def ensure_image_field(Movie):
     for field in Movie._meta.local_fields:
         if field.name == 'image':
             return field
@@ -25,7 +25,7 @@ def add_image_column_if_missing(apps, schema_editor):
             )
         }
 
-    field = get_image_field(Movie)
+    field = ensure_image_field(Movie)
     if field.column not in existing_columns:
         schema_editor.add_field(Movie, field)
 
@@ -42,7 +42,7 @@ def remove_image_column_if_present(apps, schema_editor):
             )
         }
 
-    field = get_image_field(Movie)
+    field = ensure_image_field(Movie)
     if field.column in existing_columns:
         schema_editor.remove_field(Movie, field)
 

@@ -4,8 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 
-from .models import BookmarkCategory, SavedMovie
-
 from .models import (
     Movie,
     Profile,
@@ -206,7 +204,8 @@ def detail(request, id):
         # В каких закладках уже находится этот фильм
         saved_categories = BookmarkCategory.objects.filter(
             user=request.user,
-            saved_movies__movie=movie
+            saved_movies__movie=movie,
+            saved_movies__user=request.user,
         ).distinct()
 
     return render(
@@ -336,6 +335,7 @@ def profile(request):
     )
 
 
+@require_POST
 def logout_view(request):
 
     logout(request)
@@ -393,6 +393,7 @@ def create_category(request):
 
 
 @login_required
+@require_POST
 def add_movie_to_category(request, movie_id, category_id):
 
     movie = get_object_or_404(
@@ -414,6 +415,7 @@ def add_movie_to_category(request, movie_id, category_id):
 
     return redirect("detail", id=movie.id)
 @login_required
+@require_POST
 def remove_movie_from_category(request, movie_id, category_id):
 
     movie = get_object_or_404(
@@ -427,9 +429,13 @@ def remove_movie_from_category(request, movie_id, category_id):
         user=request.user
     )
 
-    category.movies.remove(movie)
+    SavedMovie.objects.filter(
+        user=request.user,
+        movie=movie,
+        category=category,
+    ).delete()
 
-    return redirect("collection")
+    return redirect("detail", id=movie.id)
 
 @login_required
 @require_POST

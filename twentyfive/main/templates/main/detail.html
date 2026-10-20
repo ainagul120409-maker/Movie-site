@@ -306,6 +306,12 @@
 .remove-category {
     padding: 8px 12px;
 
+    border: none;
+
+    cursor: pointer;
+
+    font-size: inherit;
+
     border-radius: 6px;
 
     text-decoration: none;
@@ -898,23 +904,19 @@ body {
                             📁 {{ category.name }}
                         </span>
 
-                        {% if movie in category.movies.all %}
+                        {% if category in saved_categories %}
 
-                            <a
-                                href="{% url 'remove_movie_from_category' movie.id category.id %}"
-                                class="remove-category"
-                            >
-                                Удалить
-                            </a>
+                            <form method="post" action="{% url 'remove_movie_from_category' movie.id category.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="remove-category">Удалить</button>
+                            </form>
 
                         {% else %}
 
-                            <a
-                                href="{% url 'add_movie_to_category' movie.id category.id %}"
-                                class="save-category"
-                            >
-                                Сохранить
-                            </a>
+                            <form method="post" action="{% url 'add_movie_to_category' movie.id category.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="save-category">Сохранить</button>
+                            </form>
 
                         {% endif %}
 

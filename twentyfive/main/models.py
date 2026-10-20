@@ -68,12 +68,6 @@ class BookmarkCategory(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    movies = models.ManyToManyField(
-        Movie,
-        blank=True,
-        related_name="bookmark_categories"
-    )
-
     def __str__(self):
         return self.name
     
@@ -110,12 +104,3 @@ class SavedMovie(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.movie.name}"
-
-
-category = models.ForeignKey(
-    BookmarkCategory,
-    on_delete=models.CASCADE,
-    related_name="saved_movies",
-    null=True,
-    blank=True
-)
